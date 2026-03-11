@@ -1,4 +1,4 @@
 # singbox-enhanced-dns-rule
-[![Generate second-last-rule.json](https://github.com/BedrockDigger/singbox-enhanced-dns-rule/actions/workflows/generate-second-last-rule.yml/badge.svg)](https://github.com/BedrockDigger/singbox-enhanced-dns-rule/actions/workflows/generate-second-last-rule.yml)
+[![Generate rule-sets](https://github.com/BedrockDigger/sing-box-rule-set/actions/workflows/generate-rule-sets.yml/badge.svg)](https://github.com/BedrockDigger/sing-box-rule-set/actions/workflows/generate-rule-sets.yml)
 
 Remember to enable **"Read and write permissions"** in Settings -> Actions -> General -> Workflow permissions before running the workflow.

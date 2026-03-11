@@ -16,7 +16,8 @@ jobs:
           curl -fSL --parallel --parallel-immediate \
             -o geolocation-!cn.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json \
             -o geoip-cn.json https://ruleset.skk.moe/sing-box/ip/china_ip.json \
-            -o geoip-cn-ipv6.json https://ruleset.skk.moe/sing-box/ip/china_ip_ipv6.json
+            -o geoip-cn-ipv6.json https://ruleset.skk.moe/sing-box/ip/china_ip_ipv6.json \
+            -o netflix.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/netflix.json
 
       - name: Combine rulesets into second-last-rule.json
         run: |
@@ -37,10 +38,21 @@ jobs:
             }]
           }' > second-last-rule.json
 
+      - name: Generate netflix-ipv6.json
+        run: |
+          jq '{
+            version: .version,
+            rules: [
+              .rules[0] | {
+                ip_cidr: [.ip_cidr[] | select(contains(":"))]
+              }
+            ]
+          }' netflix.json > netflix-ipv6.json
+
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add second-last-rule.json
+          git add second-last-rule.json netflix-ipv6.json
           git commit --allow-empty -m "Released on $(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')"
           git push

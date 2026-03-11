@@ -8,25 +8,19 @@ jobs:
   generate_rule:
     runs-on: ubuntu-latest
     steps:
-      - name: Initialize environment
-        run: |
-          echo "BUILDTIME=$(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
       - name: Checkout current repo
         uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}
-          path: repo
-      - name: Download geolocation-!cn.json
-        run: curl -o geolocation-!cn.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json
-      - name: Download geoip-cn.json
+
+      - name: Download rulesets
         run: |
-          curl -o geoip-cn.json https://ruleset.skk.moe/sing-box/ip/china_ip.json
-          curl -o geoip-cn-ipv6.json https://ruleset.skk.moe/sing-box/ip/china_ip_ipv6.json
-      - name: Combine both rulesets and write to second-last-rule.json
+          curl -fSL --parallel --parallel-immediate \
+            -o geolocation-!cn.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json \
+            -o geoip-cn.json https://ruleset.skk.moe/sing-box/ip/china_ip.json \
+            -o geoip-cn-ipv6.json https://ruleset.skk.moe/sing-box/ip/china_ip_ipv6.json
+
+      - name: Combine rulesets into second-last-rule.json
         run: |
-          jq -c '.rules[0].domain' geolocation-!cn.json > temp_domain.json
-          jq -c '.rules[0].ip_cidr' geoip-cn.json > temp_ip_cidr.json
-          jq -n --slurpfile a geolocation-!cn.json --slurpfile b geoip-cn.json --slurpfile c geoip-cn-ipv6.json '{
+          jq -n --slurpfile a geolocation-\!cn.json --slurpfile b geoip-cn.json --slurpfile c geoip-cn-ipv6.json '{
             version: 1,
             rules: [{
               type: "logical",
@@ -41,13 +35,12 @@ jobs:
                 }
               ]
             }]
-          }' > repo/second-last-rule.json
+          }' > second-last-rule.json
+
       - name: Commit and push changes
         run: |
-          cd repo
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit --allow-empty -m "Released on ${{ env.BUILDTIME }}"
-          git remote add new_origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-          git push -f -u new_origin main 
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add second-last-rule.json
+          git commit --allow-empty -m "Released on $(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')"
+          git push

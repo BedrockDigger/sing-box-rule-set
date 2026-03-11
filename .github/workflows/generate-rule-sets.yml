@@ -1,4 +1,4 @@
-name: Generate second-last-rule.json
+name: Generate rule-sets
 on:
   workflow_dispatch:
   schedule:

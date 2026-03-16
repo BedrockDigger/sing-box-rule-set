@@ -15,9 +15,11 @@ jobs:
         run: |
           curl -fSL --parallel --parallel-immediate \
             -o geolocation-!cn.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json \
-            -o geoip-cn.json https://ruleset.skk.moe/sing-box/ip/china_ip.json \
-            -o geoip-cn-ipv6.json https://ruleset.skk.moe/sing-box/ip/china_ip_ipv6.json \
+            -o geoip-cn.txt https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN.txt \
+            -o geoip-cn-ipv6.txt https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_6.txt \
             -o netflix.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/netflix.json
+          jq -Rn '[inputs | select(length > 0)]' geoip-cn.txt > geoip-cn.json
+          jq -Rn '[inputs | select(length > 0)]' geoip-cn-ipv6.txt > geoip-cn-ipv6.json
 
       - name: Combine rulesets into second-last-rule.json
         run: |
@@ -32,7 +34,7 @@ jobs:
                   invert: true
                 },
                 {
-                  ip_cidr: ($b[0].rules[0].ip_cidr + $c[0].rules[0].ip_cidr)
+                  ip_cidr: ($b[0] + $c[0])
                 }
               ]
             }]

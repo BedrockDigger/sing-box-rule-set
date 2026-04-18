@@ -18,7 +18,14 @@ jobs:
             -o geoip-cn.txt https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN.txt \
             -o geoip-cn-ipv6.txt https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_6.txt \
             -o netflix.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/netflix.json
-          jq -Rn '[inputs | select(length > 0)]' geoip-cn.txt > geoip-cn.json
+          jq -Rn '{
+            version: 1,
+            rules: [
+              {
+                ip_cidr: [inputs | select(length > 0)]
+              }
+            ]
+          }' geoip-cn.txt > geoip-cn.json
           jq -Rn '[inputs | select(length > 0)]' geoip-cn-ipv6.txt > geoip-cn-ipv6.json
 
       - name: Combine rulesets into second-last-rule.json
@@ -34,7 +41,7 @@ jobs:
                   invert: true
                 },
                 {
-                  ip_cidr: ($b[0] + $c[0])
+                  ip_cidr: ($b[0].rules[0].ip_cidr + $c[0])
                 }
               ]
             }]
@@ -55,6 +62,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add second-last-rule.json netflix-ipv6.json
+          git add geoip-cn.json second-last-rule.json netflix-ipv6.json
           git commit --allow-empty -m "Released on $(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')"
           git push

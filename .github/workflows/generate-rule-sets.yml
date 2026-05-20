@@ -57,11 +57,12 @@ jobs:
               }
             ]
           }' netflix.json > netflix-ipv6.json
+          jq -r '.rules[0].ip_cidr[]' netflix-ipv6.json > netflix-ipv6.txt
 
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add geoip-cn.json second-last-rule.json netflix-ipv6.json
+          git add geoip-cn.json second-last-rule.json netflix-ipv6.json netflix-ipv6.txt
           git commit --allow-empty -m "Released on $(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')"
           git push

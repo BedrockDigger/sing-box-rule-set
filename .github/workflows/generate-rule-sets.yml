@@ -20,10 +20,10 @@ jobs:
               -o "$output" "$url"
           }
 
-          download_with_retry "geolocation-!cn.json" "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json"
-          download_with_retry "geoip-cn.txt" "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN.txt"
-          download_with_retry "geoip-cn-ipv6.txt" "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_6.txt"
-          download_with_retry "netflix.json" "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/netflix.json"
+          download_with_retry "geolocation-!cn.json" "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-%21cn.json"
+          download_with_retry "geoip-cn.txt" "https://cdn.jsdelivr.net/gh/DH-Teams/DH-Geo_AS_IP_CN@main/Geo_AS_IP_CN.txt"
+          download_with_retry "geoip-cn-ipv6.txt" "https://cdn.jsdelivr.net/gh/DH-Teams/DH-Geo_AS_IP_CN@main/Geo_AS_IP_CN_6.txt"
+          download_with_retry "netflix.json" "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/netflix.json"
           jq -Rn '{
             version: 1,
             rules: [

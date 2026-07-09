@@ -13,17 +13,11 @@ jobs:
 
       - name: Download rulesets
         run: |
-          download_with_retry() {
-            local output="$1"
-            local url="$2"
-            curl -fSL --retry 5 --retry-delay 2 --retry-all-errors \
-              -o "$output" "$url"
-          }
-
-          download_with_retry "geolocation-!cn.json" "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json"
-          download_with_retry "geoip-cn.txt" "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN.txt"
-          download_with_retry "geoip-cn-ipv6.txt" "https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_6.txt"
-          download_with_retry "netflix.json" "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/netflix.json"
+          curl -fSL --parallel --parallel-immediate \
+            -o geolocation-!cn.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.json \
+            -o geoip-cn.txt https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN.txt \
+            -o geoip-cn-ipv6.txt https://raw.githubusercontent.com/DH-Teams/DH-Geo_AS_IP_CN/main/Geo_AS_IP_CN_6.txt \
+            -o netflix.json https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geoip/netflix.json
           jq -Rn '{
             version: 1,
             rules: [
